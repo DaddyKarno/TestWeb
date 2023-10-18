@@ -1,0 +1,112 @@
+<html>
+<head>
+<link rel="icon" href="gamepad.png">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<meta name="viewport" content="width=device-width">
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="mystyle.css">
+</head>
+<body>
+onload="loadPage";
+<title>Мои отзывы </title>
+<div  class= "block1">
+<form nane="formSu" action="/" method="POST" id="gameForm">
+<h2>Добавить новый отзыв</h2>
+<p>Добавьте Изображение</p><br>
+<div  class="imageinput">
+      <label for="inputTag">  
+		<input id="acceptImg" name="gameImage" type="file" class="addimage"  accept=".png, .jpg, .jpeg" onchange="loadImageFileAsURL()"/>
+       	<span class="image"><i class="fa fa-cloud"></i></span>
+      </label>
+</div class="imageinput">
+<p>Название игры</p> 
+<input name="gameName" type="textarea" class="gamename" placeholder="Введите название игры"/><br>
+<br>
+<p>Ваш отзыв</p><br>
+<textarea name="gameRating" class="rating" rows="2" cols="20" placeholder="Ваш отзыв"></textarea>
+<p>Оценка</p><br>
+<input name="gameScore" type="range" class="ratingrange" min="1" max="10"/>
+<p><input id="sendForm" type="submit" class="b1" value="Отправить отзыв"/></p>
+</form>
+</div>
+
+<div class="block2" id="clear">
+<h3 id="demo"></h3>
+<h2>Мои оценки</h2>
+<h3> BioShock Infinite</h3> 
+<p><img src="cover_261.jpg"> 10/10</p>
+<p><i>"Играть стоит. Потрясающая игра, проработанная сюжетка, красивая графика, интересные персонажи.</i></p>
+<h3>Dota2</h3> 
+<p><img src="0bebWvF7qixyP-cr-VYrGA.jpeg"> 0/10</p>
+<p><i>"Лучшая игра, чтобы потерять лет 10 своей жизни.</i></p>
+
+</div>
+<script >
+
+	
+const form = document.getElementById("gameForm");
+var GodObj = {};
+function loadImageFileAsURL()
+{
+    var filesSelected = document.getElementById("acceptImg").files;
+    if (filesSelected.length > 0)
+    {
+        var fileToLoad = filesSelected[0];
+        var fileReader = new FileReader();
+        fileReader.onload = function(fileLoadedEvent) 
+        {
+            var dataUrlImg = fileLoadedEvent.target.result;
+            GodObj.dataUrlResult= dataUrlImg;
+        };
+        fileReader.readAsDataURL(fileToLoad);
+    }  
+}
+
+
+function retrieveFormValue(event){
+
+
+
+	event.preventDefault();
+	const 
+	gameName=form.querySelector('[name="gameName"]'),
+	gameSumbit=form.querySelector('[name="gameRating"]'),
+	gameScore=form.querySelector('[name="gameScore"]');
+	const values={	
+		gameName: gameName.value,
+		gameSumbit: gameSumbit.value,
+		gameScore: gameScore.value
+	};
+	const DataUrlImage=GodObj.dataUrlResult;
+    let comment={
+    gameName: gameName.value,
+    gameSumbit:gameSumbit.value,
+    gameScore:gameScore.value,
+    dataURL:DataUrlImage
+    };
+
+    var comments=getItems();
+    comments.push(comment);
+    localStorage.setItem('Comments',JSON.stringify(comments)); 
+	alert("Ваш отзыв сохранён!");
+   event.target.reset();
+}
+function getItems(){
+    var textComments=localStorage.getItem("Comments") || "[]";
+    return JSON.parse(textComments) || [];
+}
+
+function loadPage(){
+    var comments =getItems();
+    var html='';
+    comments.forEach(comment=>{
+        html+='<div><h3>'+ comment.gameName+ '</h3>'+ comment.gameSumbit + comment.gameScore+'<img src="' + comment.dataURL + '"/></div>';
+    });
+   document.getElementById("demo").innerHTML = html;
+}
+
+form.addEventListener('submit',retrieveFormValue,loadImageFileAsURL);
+window.onload= loadPage;
+</script>
+</body>
+</html>
